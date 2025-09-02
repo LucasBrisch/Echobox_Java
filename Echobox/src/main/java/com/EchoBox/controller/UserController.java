@@ -1,16 +1,17 @@
 package com.EchoBox.controller;
 
 import com.EchoBox.model.User;
+import com.EchoBox.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -18,13 +19,13 @@ import java.util.List;
 @Tag(name = "User", description = "APIs for managing users")
 public class UserController {
 
-    private List<User> users = new ArrayList<>();
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping
     public ResponseEntity<User> save(@Valid @RequestBody User user) {
-        user.setId(1);
-        users.add(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        User savedUser = userRepository.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
     @GetMapping
@@ -33,16 +34,25 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
     })
     public List<User> findAll() {
-        return users;
+        return userRepository.findAll();
     }
 
     @PutMapping("/{id}")
-    public User update(@PathVariable("id") Integer id, @RequestBody User user) {
-        user.setId(id);
-        return user;
+    public ResponseEntity<User> update(@PathVariable("id") Integer id, @RequestBody User user) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        user.setIdUser(id);
+        User updatedUser = userRepository.save(user);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        userRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

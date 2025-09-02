@@ -3,22 +3,27 @@ package com.EchoBox.model;
 import lombok.Data;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.*;
 
+@Entity
 @Data
 public class Company {
-    @NotNull
-    @NotBlank
-    private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idCompany;
 
     @NotNull
     @NotBlank
-    private String name;
+    @Column(nullable = false)
+    private String nameCompany;
 
     @NotNull
     @NotBlank
-    private String email;
+    @Column(nullable = false)
+    private String emailCompany;
 
     @NotNull
     @NotBlank
-    private String cnpj;
+    @Column(nullable = false)
+    private String cnpjCompany;
 }

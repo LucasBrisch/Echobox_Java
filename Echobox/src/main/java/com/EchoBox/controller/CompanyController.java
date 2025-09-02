@@ -1,16 +1,17 @@
 package com.EchoBox.controller;
 
 import com.EchoBox.model.Company;
+import com.EchoBox.repository.CompanyRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -18,13 +19,13 @@ import java.util.List;
 @Tag(name = "Company", description = "APIs for managing companies")
 public class CompanyController {
 
-    private List<Company> companies = new ArrayList<>();
+    @Autowired
+    private CompanyRepository companyRepository;
 
     @PostMapping
     public ResponseEntity<Company> save(@Valid @RequestBody Company company) {
-        company.setId(1);
-        companies.add(company);
-        return ResponseEntity.status(HttpStatus.CREATED).body(company);
+        Company savedCompany = companyRepository.save(company);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCompany);
     }
 
     @GetMapping
@@ -33,16 +34,25 @@ public class CompanyController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
     })
     public List<Company> findAll() {
-        return companies;
+        return companyRepository.findAll();
     }
 
     @PutMapping("/{id}")
-    public Company update(@PathVariable("id") Integer id, @RequestBody Company company) {
-        company.setId(id);
-        return company;
+    public ResponseEntity<Company> update(@PathVariable("id") Integer id, @RequestBody Company company) {
+        if (!companyRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        company.setIdCompany(id);
+        Company updatedCompany = companyRepository.save(company);
+        return ResponseEntity.ok(updatedCompany);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
+        if (!companyRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        companyRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

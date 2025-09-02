@@ -1,30 +1,31 @@
 package com.EchoBox.controller;
 
 import com.EchoBox.model.Reply;
+import com.EchoBox.repository.ReplyRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/reply")
 @Tag(name = "Reply", description = "APIs for managing replies")
 public class ReplyController {
-    
-    private List<Reply> replies = new ArrayList<>();
+
+    @Autowired
+    private ReplyRepository replyRepository;
 
     @PostMapping
     public ResponseEntity<Reply> save(@Valid @RequestBody Reply reply) {
-        reply.setId(1);
-        replies.add(reply);
-        return ResponseEntity.status(HttpStatus.CREATED).body(reply);
+        Reply savedReply = replyRepository.save(reply);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedReply);
     }
 
     @GetMapping
@@ -33,17 +34,25 @@ public class ReplyController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
     })
     public List<Reply> findAll() {
-        return replies;
+        return replyRepository.findAll();
     }
 
     @PutMapping("/{id}")
-    public Reply update(@PathVariable("id") Integer id, @RequestBody Reply reply) {
-        reply.setId(id);
-        return reply;
+    public ResponseEntity<Reply> update(@PathVariable("id") Integer id, @RequestBody Reply reply) {
+        if (!replyRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        reply.setIdReply(id);
+        Reply updatedReply = replyRepository.save(reply);
+        return ResponseEntity.ok(updatedReply);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
+        if (!replyRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        replyRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
-

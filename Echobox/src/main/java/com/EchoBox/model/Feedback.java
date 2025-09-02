@@ -3,30 +3,39 @@ package com.EchoBox.model;
 import lombok.Data;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.*;
 
+@Entity
 @Data
 public class Feedback {
-    @NotNull
-    @NotBlank
-    private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idfeedback")
+    private Integer idFeedback;
 
     @NotNull
     @NotBlank
-    private String title;
+    @Column(name = "titlefeedback", nullable = false)
+    private String titleFeedback;
 
     @NotNull
     @NotBlank
-    private String review;
+    @Column(name = "reviewfeedback", nullable = false)
+    private String reviewFeedback;
 
     @NotNull
-    private Integer userId;
+    @Column(name = "fk_feedback_iduser", nullable = false)
+    private Integer fkFeedbackIdUser;
 
     @NotNull
-    private Integer companyId;
+    @Column(name = "fk_feedback_idcompany", nullable = false)
+    private Integer fkFeedbackIdCompany;
 
     @NotNull
-    private Integer categoryId;
+    @Column(name = "fk_feedback_idcategory", nullable = false)
+    private Integer fkFeedbackIdCategory;
 
     @NotNull
-    private Integer statusId;
+    @Column(name = "fk_feedback_idstatus", nullable = false)
+    private Integer fkFeedbackIdStatus;
 }

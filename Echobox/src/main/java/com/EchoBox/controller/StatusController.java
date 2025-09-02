@@ -1,11 +1,13 @@
 package com.EchoBox.controller;
 
 import com.EchoBox.model.Status;
+import com.EchoBox.repository.StatusRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +20,13 @@ import java.util.List;
 @Tag(name = "Status", description = "APIs for managing statuses")
 public class StatusController {
 
-    private List<Status> statuses = new ArrayList<>();
+    @Autowired
+    private StatusRepository statusRepository;
 
     @PostMapping
     public ResponseEntity<Status> save(@Valid @RequestBody Status status) {
-        status.setId(1);
-        statuses.add(status);
-        return ResponseEntity.status(HttpStatus.CREATED).body(status);
+        Status savedStatus = statusRepository.save(status);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedStatus);
     }
 
     @GetMapping
@@ -33,13 +35,17 @@ public class StatusController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
     })
     public List<Status> findAll() {
-        return statuses;
+        return statusRepository.findAll();
     }
 
     @PutMapping("/{id}")
-    public Status update(@PathVariable("id") Integer id, @RequestBody Status status) {
-        status.setId(id);
-        return status;
+    public ResponseEntity<Status> update(@PathVariable("id") Integer id, @RequestBody Status status) {
+        if (!statusRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        status.setIdStatus(id);
+        Status updatedStatus = statusRepository.save(status);
+        return ResponseEntity.ok(updatedStatus);
     }
 
     @DeleteMapping("/{id}")
