@@ -16,15 +16,15 @@ import java.util.List;
 // ############### CRUD OPERATIONS ###############
 
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/categories")
 @Tag(name = "Category", description = "API endpoints for category management")
 public class CategoryController {
 
     // ############### CATEGORY CONSTRUCTOR ###############
 
-
     // You can just use @Autowired here, but it's bad practice
     private final CategoryRepository categoryRepository;
+
     public CategoryController(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
@@ -42,7 +42,7 @@ public class CategoryController {
     // @Valid triggers the rules set in the model, on its own it does nothing
     // The .save() method takes the json object, creates an insert statement and executes it
     // The pipeline for the save() function is:
-    // json object (idless) -> java object (idless) -> into the database (now with id) ->
+    // json object (idless) -> java object (idless) -> into the database (generates id) ->
     // -> (updates the java object with the id) -> java object (w/ id) -> json object (w/ id) -> response
 
     public ResponseEntity<Category> save(@Valid @RequestBody Category category) {
@@ -51,6 +51,7 @@ public class CategoryController {
     }
 
     // ############### GET ALL OPERATION ###############
+
     @GetMapping
     @Operation(summary = "Gets a list of categories", description = "Retrieves all categories from the database")
     @ApiResponses(value = {
