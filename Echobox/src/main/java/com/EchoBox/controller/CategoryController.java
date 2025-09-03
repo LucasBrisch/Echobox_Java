@@ -7,47 +7,71 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// ############### CRUD OPERATIONS ###############
+
 @RestController
 @RequestMapping("/category")
-@Tag(name = "Category", description = "APIs de gerenciamento de categorias")
+@Tag(name = "Category", description = "API endpoints for category management")
 public class CategoryController {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    // ############### CATEGORY CONSTRUCTOR ###############
+
+
+    // You can just use @Autowired here, but it's bad practice
+    private final CategoryRepository categoryRepository;
+    public CategoryController(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
+
+    // ############### POST OPERATION ###############
 
     @PostMapping
+    @Operation(summary = "Creates a new category", description = "Creates a new category with auto-incremented ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data")
+    })
+
+    // @RequestBody converts JSON to Java object
+    // @Valid triggers the rules set in the model, on its own it does nothing
+    // The .save() method takes the json object, creates an insert statement and executes it
+    // The pipeline for the save() function is:
+    // json object (idless) -> java object (idless) -> into the database (now with id) ->
+    // -> (updates the java object with the id) -> java object (w/ id) -> json object (w/ id) -> response
+
     public ResponseEntity<Category> save(@Valid @RequestBody Category category) {
         Category savedCategory = categoryRepository.save(category);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
     }
 
+    // ############### GET ALL OPERATION ###############
     @GetMapping
-    @Operation(summary = "Obter a lista de categorias", description = "Retorna a lista de categorias")
+    @Operation(summary = "Gets a list of categories", description = "Retrieves all categories from the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Recuperado com sucesso"),
+            @ApiResponse(responseCode = "200", description = "List retrieved successfully"),
+            @ApiResponse(responseCode = "500", description = "Failed to retrieve list")
     })
+
+    // This is just a built-in function that does a "SELECT * FROM category"
     public List<Category> findAll() {
         return categoryRepository.findAll();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Category> update(@PathVariable("id") Integer id, @RequestBody Category category) {
-        if (!categoryRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        category.setIdCategory(id);
-        Category updatedCategory = categoryRepository.save(category);
-        return ResponseEntity.ok(updatedCategory);
-    }
+    // ############### DELETE OPERATION ###############
 
+    // This is all built-in functionality, don't worry about it, void is used because the object's body is empty
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deletes a category", description = "Deletes the category with the specified ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Category not found")
+    })
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
         if (!categoryRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -55,4 +79,17 @@ public class CategoryController {
         categoryRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    // ############### PUT OPERATION ###############
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Category> update(@PathVariable("id") Integer id, @RequestBody Category category) {
+        if (!categoryRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        category.setId(id);
+        Category updatedCategory = categoryRepository.save(category);
+        return ResponseEntity.ok(updatedCategory);
+    }
+
 }
