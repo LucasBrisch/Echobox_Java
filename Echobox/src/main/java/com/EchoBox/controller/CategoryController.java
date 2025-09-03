@@ -54,8 +54,8 @@ public class CategoryController {
     @GetMapping
     @Operation(summary = "Gets a list of categories", description = "Retrieves all categories from the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List retrieved successfully"),
-            @ApiResponse(responseCode = "500", description = "Failed to retrieve list")
+            @ApiResponse(responseCode = "200", description = "Category list retrieved successfully"),
+            @ApiResponse(responseCode = "500", description = "Failed to retrieve category list")
     })
 
     // This is just a built-in function that does a "SELECT * FROM category"
@@ -90,6 +90,20 @@ public class CategoryController {
         category.setId(id);
         Category updatedCategory = categoryRepository.save(category);
         return ResponseEntity.ok(updatedCategory);
+    }
+
+    // ############### GET BY ID OPERATION ###############
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Gets a category by ID", description = "Retrieves the category with the specified ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Category retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Category not found")
+    })
+    public ResponseEntity<Category> findById(@PathVariable("id") Integer id) {
+        return categoryRepository.findById(id) // The findById method functions like an if statement
+                .map(ResponseEntity::ok) // This is the method reference for a lambda function
+                .orElse(ResponseEntity.notFound().build());
     }
 
 }
