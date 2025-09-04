@@ -1,5 +1,7 @@
 package com.EchoBox.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -28,6 +30,20 @@ public class User {
     private String picture;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "fk_user_idCompany")
     private Company company;
+
+    // ############### GETTERS AND SETTERS FOR FOREIGN KEYS ###############
+
+    @JsonProperty("company")
+    public Integer getCompanyId() {
+        return company != null ? company.getId() : null;
+    }
+
+    @JsonProperty("company")
+    public void setCompanyId(Integer companyId) {
+        this.company = new Company();
+        this.company.setId(companyId);
+    }
 }
