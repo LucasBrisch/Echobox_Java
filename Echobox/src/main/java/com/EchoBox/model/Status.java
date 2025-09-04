@@ -13,13 +13,13 @@ public class Status {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    @Column(name = "idstatus")
+    @Column(name = "idStatus")
     private Integer id;
 
     @NotBlank
-    @Column(name = "typestatus", nullable = false)
+    @Column(name = "typeStatus", nullable = false)
     private String type;
 
-    @Column(name = "colorstatus")
+    @Column(name = "colorStatus")
     private String color;
 }

@@ -7,28 +7,27 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "user")
+@Table(name = "\"user\"")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    @Column(name = "iduser")
+    @Column(name = "idUser")
     private Integer id;
 
     @NotBlank
-    @Column(name = "emailuser", nullable = false)
+    @Column(name = "emailUser", nullable = false)
     private String email;
 
     @NotBlank
-    @Column(name = "passworduser", nullable = false, length = 64)
+    @Column(name = "passwordUser", nullable = false, length = 64)
     private String password;
 
-    @Column(name = "pictureuser")
+    @Column(name = "pictureUser")
     private String picture;
 
-    // dont need lazy fetch but it helps
-    @ManyToOne(fetch = FetchType.LAZY) // Many to one means many users can belong to one company
-    @JoinColumn(name = "fk_user_idcompany") // Need to use @JoinColumn because Company will be a Java object
+    @ManyToOne
+    @JoinColumn(name = "fk_user_idCompany")
     private Company company;
 }

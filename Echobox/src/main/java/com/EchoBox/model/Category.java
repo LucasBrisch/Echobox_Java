@@ -14,14 +14,14 @@ public class Category {
     // In theory GenerationType.AUTO should work, but it doesn't, so we use IDENTITY
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY) // We need to make the ids read-only for auto-increment
-    @Column(name = "idcategory")
+    @Column(name = "idCategory")
     private Integer id;
 
     @NotBlank
-    @Column(name = "typecategory", nullable = false)
+    @Column(name = "typeCategory", nullable = false)
     private String type;
 
     @NotBlank
-    @Column(name = "colorcategory")
+    @Column(name = "colorCategory")
     private String color;
 }

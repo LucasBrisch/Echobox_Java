@@ -13,30 +13,30 @@ public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    @Column(name = "idfeedback")
+    @Column(name = "idFeedback")
     private Integer id;
 
     @NotBlank
-    @Column(name = "titlefeedback", nullable = false)
+    @Column(name = "titleFeedback", nullable = false)
     private String title;
 
     @NotBlank
-    @Column(name = "reviewfeedback", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "reviewFeedback", nullable = false, columnDefinition = "TEXT")
     private String review;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_feedback_iduser", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "fk_feedback_idUser", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_feedback_idcompany", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "fk_feedback_idCompany", nullable = false)
     private Company company;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_feedback_idcategory", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "fk_feedback_idCategory", nullable = false)
     private Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_feedback_idstatus", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "fk_feedback_idStatus", nullable = false)
     private Status status;
 }

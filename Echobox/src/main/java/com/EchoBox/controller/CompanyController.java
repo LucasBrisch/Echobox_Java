@@ -1,16 +1,15 @@
 package com.EchoBox.controller;
 
-import com.EchoBox.model.Category;
 import com.EchoBox.model.Company;
-import com.EchoBox.repository.CategoryRepository;
 import com.EchoBox.repository.CompanyRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,6 +28,19 @@ public class CompanyController {
         this.companyRepository = companyRepository;
     }
 
+    // ############### POST OPERATION ###############
+
+    @PostMapping
+    @Operation(summary = "Creates a new company", description = "Creates a new company with auto-incremented ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data")
+    })
+    public ResponseEntity<Company> save(@Valid @RequestBody Company company) {
+        Company savedCompany = companyRepository.save(company);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCompany);
+    }
+
     // ############### GET ALL OPERATION ###############
 
     @GetMapping
@@ -37,9 +49,49 @@ public class CompanyController {
             @ApiResponse(responseCode = "200", description = "Company list retrieved successfully"),
             @ApiResponse(responseCode = "500", description = "Failed to retrieve company list")
     })
-
-    // This is just a built-in function that does a "SELECT * FROM category"
     public List<Company> findAll() {
         return companyRepository.findAll();
+    }
+
+    // ############### DELETE OPERATION ###############
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Deletes a company", description = "Deletes the company with the specified ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Company not found")
+    })
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
+        if (!companyRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        companyRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ############### PUT OPERATION ###############
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Company> update(@PathVariable("id") Integer id, @RequestBody Company company) {
+        if (!companyRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        company.setId(id);
+        Company updatedCompany = companyRepository.save(company);
+        return ResponseEntity.ok(updatedCompany);
+    }
+
+    // ############### GET BY ID OPERATION ###############
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Gets a company by ID", description = "Retrieves the company with the specified ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Company retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Company not found")
+    })
+    public ResponseEntity<Company> findById(@PathVariable("id") Integer id) {
+        return companyRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

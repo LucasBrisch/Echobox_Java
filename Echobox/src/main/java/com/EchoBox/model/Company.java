@@ -14,19 +14,19 @@ public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    @Column(name = "idcompany")
+    @Column(name = "idCompany")
     private Integer id;
 
     @NotBlank
-    @Column(name = "namecompany", nullable = false)
+    @Column(name = "nameCompany", nullable = false)
     private String name;
 
     @Email
     @NotBlank
-    @Column(name = "emailcompany", nullable = false)
+    @Column(name = "emailCompany", nullable = false)
     private String email;
 
     @NotBlank
-    @Column(name = "cnpjcompany", nullable = false, length = 14)
+    @Column(name = "cnpjCompany", nullable = false, length = 14)
     private String cnpj;
 }

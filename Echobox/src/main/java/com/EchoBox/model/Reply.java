@@ -16,27 +16,27 @@ public class Reply {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    @Column(name = "idreply")
+    @Column(name = "idReply")
     private Integer id;
 
     @NotBlank
-    @Column(name = "titlereply", nullable = false)
+    @Column(name = "titleReply", nullable = false)
     private String title;
 
     @NotBlank
-    @Column(name = "reviewreply", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "reviewReply", nullable = false, columnDefinition = "TEXT")
     private String review;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_reply_idfeedback", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "fk_reply_idFeedback", nullable = false)
     private Feedback feedback;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_reply_iduser", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "fk_reply_idUser", nullable = false)
     private User user;
 
-    @CreationTimestamp // You don't need to set this, but it's good for hibernate and I want to try it
-    @Column(name = "createddate")
+    @CreationTimestamp
+    @Column(name = "createdDate")
     private LocalDateTime createdDate;
 
 }
