@@ -1,5 +1,7 @@
 package com.EchoBox.controller;
 
+import com.EchoBox.exception.ErrorCode;
+import com.EchoBox.exception.ResourceNotFoundException;
 import com.EchoBox.model.Reply;
 import com.EchoBox.repository.ReplyRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,7 +65,7 @@ public class ReplyController {
     })
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
         if (!replyRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException(ErrorCode.REPLY_NOT_FOUND);
         }
         replyRepository.deleteById(id);
         return ResponseEntity.noContent().build();
@@ -72,9 +74,14 @@ public class ReplyController {
     // ############### PUT OPERATION ###############
 
     @PutMapping("/{id}")
+    @Operation(summary = "Updates a reply", description = "Updates the reply with the specified ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Reply not found")
+    })
     public ResponseEntity<Reply> update(@PathVariable("id") Integer id, @RequestBody Reply reply) {
         if (!replyRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException(ErrorCode.REPLY_NOT_FOUND);
         }
         reply.setId(id);
         Reply updatedReply = replyRepository.save(reply);
@@ -92,6 +99,6 @@ public class ReplyController {
     public ResponseEntity<Reply> findById(@PathVariable("id") Integer id) {
         return replyRepository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.REPLY_NOT_FOUND));
     }
 }

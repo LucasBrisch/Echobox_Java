@@ -1,5 +1,7 @@
 package com.EchoBox.controller;
 
+import com.EchoBox.exception.ErrorCode;
+import com.EchoBox.exception.ResourceNotFoundException;
 import com.EchoBox.model.Company;
 import com.EchoBox.repository.CompanyRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,7 +65,7 @@ public class CompanyController {
     })
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
         if (!companyRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException(ErrorCode.COMPANY_NOT_FOUND);
         }
         companyRepository.deleteById(id);
         return ResponseEntity.noContent().build();
@@ -72,9 +74,14 @@ public class CompanyController {
     // ############### PUT OPERATION ###############
 
     @PutMapping("/{id}")
+    @Operation(summary = "Updates a company", description = "Updates the company with the specified ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Company not found")
+    })
     public ResponseEntity<Company> update(@PathVariable("id") Integer id, @RequestBody Company company) {
         if (!companyRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException(ErrorCode.COMPANY_NOT_FOUND);
         }
         company.setId(id);
         Company updatedCompany = companyRepository.save(company);
@@ -92,6 +99,6 @@ public class CompanyController {
     public ResponseEntity<Company> findById(@PathVariable("id") Integer id) {
         return companyRepository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.COMPANY_NOT_FOUND));
     }
 }

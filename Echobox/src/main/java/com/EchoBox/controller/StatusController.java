@@ -1,5 +1,7 @@
 package com.EchoBox.controller;
 
+import com.EchoBox.exception.ErrorCode;
+import com.EchoBox.exception.ResourceNotFoundException;
 import com.EchoBox.model.Status;
 import com.EchoBox.repository.StatusRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,7 +65,7 @@ public class StatusController {
     })
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
         if (!statusRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException(ErrorCode.STATUS_NOT_FOUND);
         }
         statusRepository.deleteById(id);
         return ResponseEntity.noContent().build();
@@ -72,9 +74,14 @@ public class StatusController {
     // ############### PUT OPERATION ###############
 
     @PutMapping("/{id}")
+    @Operation(summary = "Updates a status", description = "Updates the status with the specified ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Status not found")
+    })
     public ResponseEntity<Status> update(@PathVariable("id") Integer id, @RequestBody Status status) {
         if (!statusRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException(ErrorCode.STATUS_NOT_FOUND);
         }
         status.setId(id);
         Status updatedStatus = statusRepository.save(status);
@@ -92,6 +99,6 @@ public class StatusController {
     public ResponseEntity<Status> findById(@PathVariable("id") Integer id) {
         return statusRepository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.STATUS_NOT_FOUND));
     }
 }

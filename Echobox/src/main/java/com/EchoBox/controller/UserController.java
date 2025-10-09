@@ -1,5 +1,7 @@
 package com.EchoBox.controller;
 
+import com.EchoBox.exception.ErrorCode;
+import com.EchoBox.exception.ResourceNotFoundException;
 import com.EchoBox.model.User;
 import com.EchoBox.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,7 +65,7 @@ public class UserController {
     })
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
         if (!userRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException(ErrorCode.USER_NOT_FOUND);
         }
         userRepository.deleteById(id);
         return ResponseEntity.noContent().build();
@@ -72,9 +74,14 @@ public class UserController {
     // ############### PUT OPERATION ###############
 
     @PutMapping("/{id}")
+    @Operation(summary = "Updates a user", description = "Updates the user with the specified ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Updated successfully"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     public ResponseEntity<User> update(@PathVariable("id") Integer id, @RequestBody User user) {
         if (!userRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException(ErrorCode.USER_NOT_FOUND);
         }
         user.setId(id);
         User updatedUser = userRepository.save(user);
@@ -92,6 +99,6 @@ public class UserController {
     public ResponseEntity<User> findById(@PathVariable("id") Integer id) {
         return userRepository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 }

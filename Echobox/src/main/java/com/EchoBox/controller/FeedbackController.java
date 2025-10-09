@@ -1,5 +1,7 @@
 package com.EchoBox.controller;
 
+import com.EchoBox.exception.ErrorCode;
+import com.EchoBox.exception.ResourceNotFoundException;
 import com.EchoBox.model.Feedback;
 import com.EchoBox.repository.FeedbackRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,7 +65,7 @@ public class FeedbackController {
     })
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
         if (!feedbackRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException(ErrorCode.FEEDBACK_NOT_FOUND);
         }
         feedbackRepository.deleteById(id);
         return ResponseEntity.noContent().build();
@@ -72,9 +74,14 @@ public class FeedbackController {
     // ############### PUT OPERATION ###############
 
     @PutMapping("/{id}")
+    @Operation(summary = "Updates a feedback", description = "Updates the feedback with the specified ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Feedback not found")
+    })
     public ResponseEntity<Feedback> update(@PathVariable("id") Integer id, @RequestBody Feedback feedback) {
         if (!feedbackRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException(ErrorCode.FEEDBACK_NOT_FOUND);
         }
         feedback.setId(id);
         Feedback updatedFeedback = feedbackRepository.save(feedback);
@@ -92,6 +99,6 @@ public class FeedbackController {
     public ResponseEntity<Feedback> findById(@PathVariable("id") Integer id) {
         return feedbackRepository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.FEEDBACK_NOT_FOUND));
     }
 }

@@ -1,5 +1,7 @@
 package com.EchoBox.controller;
 
+import com.EchoBox.exception.ErrorCode;
+import com.EchoBox.exception.ResourceNotFoundException;
 import com.EchoBox.model.Category;
 import com.EchoBox.repository.CategoryRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -75,7 +77,7 @@ public class CategoryController {
     })
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
         if (!categoryRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException(ErrorCode.CATEGORY_NOT_FOUND);
         }
         categoryRepository.deleteById(id);
         return ResponseEntity.noContent().build();
@@ -84,9 +86,14 @@ public class CategoryController {
     // ############### PUT OPERATION ###############
 
     @PutMapping("/{id}")
+    @Operation(summary = "Updates a category", description = "Updates the category with the specified ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Category not found")
+    })
     public ResponseEntity<Category> update(@PathVariable("id") Integer id, @RequestBody Category category) {
         if (!categoryRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException(ErrorCode.CATEGORY_NOT_FOUND);
         }
         category.setId(id);
         Category updatedCategory = categoryRepository.save(category);
