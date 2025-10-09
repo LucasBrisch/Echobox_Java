@@ -29,6 +29,9 @@ public class User {
     @Column(name = "pictureUser")
     private String picture;
 
+    @Column(name = "isAdminUser", nullable = false)
+    private Boolean isAdmin = false;
+
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "fk_user_idCompany")

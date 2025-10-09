@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class CompanyController {
     // ############### POST OPERATION ###############
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Creates a new company", description = "Creates a new company with auto-incremented ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created successfully"),
@@ -46,6 +48,7 @@ public class CompanyController {
     // ############### GET ALL OPERATION ###############
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Gets a list of companies", description = "Retrieves all companies from the database")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Company list retrieved successfully"),
@@ -58,6 +61,7 @@ public class CompanyController {
     // ############### DELETE OPERATION ###############
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Deletes a company", description = "Deletes the company with the specified ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Deleted successfully"),
@@ -74,6 +78,7 @@ public class CompanyController {
     // ############### PUT OPERATION ###############
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Updates a company", description = "Updates the company with the specified ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Updated successfully"),
@@ -91,6 +96,7 @@ public class CompanyController {
     // ############### GET BY ID OPERATION ###############
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Gets a company by ID", description = "Retrieves the company with the specified ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Company retrieved successfully"),

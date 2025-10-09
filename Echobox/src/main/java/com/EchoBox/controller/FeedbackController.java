@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class FeedbackController {
     // ############### POST OPERATION ###############
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Creates a new feedback", description = "Creates a new feedback with auto-incremented ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created successfully"),
@@ -46,6 +48,7 @@ public class FeedbackController {
     // ############### GET ALL OPERATION ###############
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Gets a list of feedbacks", description = "Retrieves all feedbacks from the database")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Feedback list retrieved successfully"),
@@ -58,6 +61,7 @@ public class FeedbackController {
     // ############### DELETE OPERATION ###############
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Deletes a feedback", description = "Deletes the feedback with the specified ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Deleted successfully"),
@@ -74,6 +78,7 @@ public class FeedbackController {
     // ############### PUT OPERATION ###############
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Updates a feedback", description = "Updates the feedback with the specified ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Updated successfully"),
@@ -91,6 +96,7 @@ public class FeedbackController {
     // ############### GET BY ID OPERATION ###############
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Gets a feedback by ID", description = "Retrieves the feedback with the specified ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Feedback retrieved successfully"),

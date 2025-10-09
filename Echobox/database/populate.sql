@@ -47,23 +47,23 @@ VALUES ('EchoBox Solutions', 'contato@echobox.com', '12345678000100'),
        ('Cliente Primeiro Corp', 'suporte@clienteprimeiro.com', '33445566000177');
 
 -- Populate the "user" table (depends on company)
-INSERT INTO "user" (emailUser, passwordUser, pictureUser, fk_user_idCompany)
-VALUES ('admin@echobox.com', encode(digest('admin123', 'sha256'), 'hex'),
-        'https://placehold.co/250?text=admin@echobox.com', 1),
-       ('alice@techinnovations.com', encode(digest('password123', 'sha256'), 'hex'),
-        'https://placehold.co/250?text=alice@techinnovations.com', 2),
-       ('bob@servicosglobais.com', encode(digest('securepass', 'sha256'), 'hex'),
-        'https://placehold.co/250?text=bob@servicosglobais.com', 3),
-       ('diana@negocioslocais.com', encode(digest('userpass', 'sha256'), 'hex'),
-        'https://placehold.co/250?text=diana@negocioslocais.com', 4),
-       ('charlie@solucoesdigitais.com', encode(digest('mypassword', 'sha256'), 'hex'),
-        'https://placehold.co/250?text=charlie@solucoesdigitais.com', 5),
-       ('eva@clienteprimeiro.com', encode(digest('strongpass', 'sha256'), 'hex'),
-        'https://placehold.co/250?text=eva@clienteprimeiro.com', 6),
-       ('joao@echobox.com', encode(digest('testpass', 'sha256'), 'hex'),
-        'https://placehold.co/250?text=joao@echobox.com', 1),
-       ('sarah@techinnovations.com', encode(digest('devpass', 'sha256'), 'hex'),
-        'https://placehold.co/250?text=sarah@techinnovations.com', 2);
+INSERT INTO "user" (emailUser, passwordUser, pictureUser, isAdminUser, fk_user_idCompany)
+VALUES ('admin@echobox.com', crypt('admin123', gen_salt('bf')),
+        'https://placehold.co/250?text=admin@echobox.com', TRUE, 1),
+       ('alice@techinnovations.com', crypt('password123', gen_salt('bf')),
+        'https://placehold.co/250?text=alice@techinnovations.com', FALSE, 2),
+       ('bob@servicosglobais.com', crypt('securepass', gen_salt('bf')),
+        'https://placehold.co/250?text=bob@servicosglobais.com', FALSE, 3),
+       ('diana@negocioslocais.com', crypt('userpass', gen_salt('bf')),
+        'https://placehold.co/250?text=diana@negocioslocais.com', FALSE, 4),
+       ('charlie@solucoesdigitais.com', crypt('mypassword', gen_salt('bf')),
+        'https://placehold.co/250?text=charlie@solucoesdigitais.com', FALSE, 5),
+       ('eva@clienteprimeiro.com', crypt('strongpass', gen_salt('bf')),
+        'https://placehold.co/250?text=eva@clienteprimeiro.com', FALSE, 6),
+       ('joao@echobox.com', crypt('testpass', gen_salt('bf')),
+        'https://placehold.co/250?text=joao@echobox.com', FALSE, 1),
+       ('sarah@techinnovations.com', crypt('devpass', gen_salt('bf')),
+        'https://placehold.co/250?text=sarah@techinnovations.com', FALSE, 2);
 
 -- Populate the feedback table (depends on user, company, category, status)
 INSERT INTO feedback (titleFeedback, reviewFeedback, fk_feedback_idUser, fk_feedback_idCompany, fk_feedback_idCategory,

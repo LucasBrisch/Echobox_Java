@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public class CategoryController {
     // ############### POST OPERATION ###############
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Creates a new category", description = "Creates a new category with auto-incremented ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created successfully"),
@@ -55,6 +57,7 @@ public class CategoryController {
     // ############### GET ALL OPERATION ###############
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Gets a list of categories", description = "Retrieves all categories from the database")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Category list retrieved successfully"),
@@ -70,6 +73,7 @@ public class CategoryController {
 
     // This is all built-in functionality, don't worry about it, void is used because the object's body is empty
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Deletes a category", description = "Deletes the category with the specified ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Deleted successfully"),
@@ -86,6 +90,7 @@ public class CategoryController {
     // ############### PUT OPERATION ###############
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Updates a category", description = "Updates the category with the specified ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Updated successfully"),
@@ -103,6 +108,7 @@ public class CategoryController {
     // ############### GET BY ID OPERATION ###############
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Gets a category by ID", description = "Retrieves the category with the specified ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Category retrieved successfully"),

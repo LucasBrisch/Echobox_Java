@@ -158,6 +158,91 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handle Spring Security authentication exceptions
+     */
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(
+            org.springframework.security.core.AuthenticationException ex,
+            HttpServletRequest request) {
+
+        Locale locale = LocaleContextHolder.getLocale();
+        String message = messageSource.getMessage(
+            ErrorCode.UNAUTHORIZED_ACCESS.getCode(),
+            null,
+            "Unauthorized access - authentication required",
+            locale
+        );
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .errorCode(ErrorCode.UNAUTHORIZED_ACCESS.getCode())
+            .message(message)
+            .status(HttpStatus.UNAUTHORIZED.value())
+            .path(request.getRequestURI())
+            .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Handle Spring Security access denied exceptions
+     */
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(
+            org.springframework.security.access.AccessDeniedException ex,
+            HttpServletRequest request) {
+
+        Locale locale = LocaleContextHolder.getLocale();
+        String message = messageSource.getMessage(
+            ErrorCode.INSUFFICIENT_PRIVILEGES.getCode(),
+            null,
+            "Insufficient privileges to access this resource",
+            locale
+        );
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .errorCode(ErrorCode.INSUFFICIENT_PRIVILEGES.getCode())
+            .message(message)
+            .status(HttpStatus.FORBIDDEN.value())
+            .path(request.getRequestURI())
+            .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    }
+
+    /**
+     * Handle JWT token exceptions
+     */
+    @ExceptionHandler(io.jsonwebtoken.JwtException.class)
+    public ResponseEntity<ErrorResponse> handleJwtException(
+            io.jsonwebtoken.JwtException ex,
+            HttpServletRequest request) {
+
+        Locale locale = LocaleContextHolder.getLocale();
+        ErrorCode errorCode = ErrorCode.INVALID_TOKEN;
+
+        // Check if it's an expired token
+        if (ex instanceof io.jsonwebtoken.ExpiredJwtException) {
+            errorCode = ErrorCode.TOKEN_EXPIRED;
+        }
+
+        String message = messageSource.getMessage(
+            errorCode.getCode(),
+            null,
+            ex.getMessage(),
+            locale
+        );
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .errorCode(errorCode.getCode())
+            .message(message)
+            .status(HttpStatus.UNAUTHORIZED.value())
+            .path(request.getRequestURI())
+            .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
      * Handle all other exceptions
      */
     @ExceptionHandler(Exception.class)

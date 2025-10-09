@@ -47,7 +47,13 @@ public enum ErrorCode {
 
     // Database errors (8000-8099)
     DATABASE_ERROR("ERR_8000"),
-    DATABASE_CONNECTION_ERROR("ERR_8001");
+    DATABASE_CONNECTION_ERROR("ERR_8001"),
+
+    // Authentication/Authorization errors (9000-9099)
+    UNAUTHORIZED_ACCESS("ERR_9000"),
+    INVALID_TOKEN("ERR_9001"),
+    TOKEN_EXPIRED("ERR_9002"),
+    INSUFFICIENT_PRIVILEGES("ERR_9003");
 
     private final String code;
 
